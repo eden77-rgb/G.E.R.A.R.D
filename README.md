@@ -51,6 +51,21 @@ Ctrl + Alt + A
 - [Python 3.12+](https://www.python.org/downloads/)
 - [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download)
 
+### 0. Lancement simplifier
+> ⚠️ Sous Windows uniquement.
+
+```bash
+.\start.bat
+```
+
+Le script de démarrage suivant va : 
+1. Lance le téléchargement du modèle qwen2.5:3b
+2. Lance le serveur Ollama
+3. Lance le téléchargement des dépendances Python
+4. Lance le serveur Python
+5. Build l'application WPF
+6. Lance l'application WPF
+
 ### 🧠 1. Lancer Ollama
 À la racine du projet :
 
