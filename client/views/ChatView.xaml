@@ -1,66 +1,195 @@
 <UserControl x:Class="client.views.ChatView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <Grid Margin="20">
+    <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="60"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <DockPanel Grid.Row="0" Margin="0,0,0,10">
-            <Button x:Name="BackButton"
-                    Content="← Retour"
-                    DockPanel.Dock="Left"
-                    Width="90"
-                    Height="30"
-                    Click="BackButton_Click"/>
-            <TextBlock x:Name="ModeLabel"
-                       VerticalAlignment="Center"
-                       FontSize="14"
-                       FontWeight="SemiBold"
-                       Margin="15,0,0,0"/>
-        </DockPanel>
-
-        <!-- Message history -->
-        <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1" Margin="0,0,0,10">
-            <ScrollViewer x:Name="HistoryScroll" VerticalScrollBarVisibility="Auto">
-                <StackPanel x:Name="MessagesPanel" Margin="10"/>
-            </ScrollViewer>
+        <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
+            <Grid Margin="20,0">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource FluentButton}" Click="Back_Click" Margin="0,0,20,0" Padding="10,5">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72B;" FontFamily="Segoe MDL2 Assets" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" FontSize="14" Margin="0,0,8,0"/>
+                            <TextBlock Text="Retour" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" FontSize="12"/>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock x:Name="ChatTitle" Text="Traduire" Foreground="#FFFFFF" FontWeight="SemiBold" FontSize="16" VerticalAlignment="Center"/>
+                </StackPanel>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button Content="&#xE72C;" FontFamily="Segoe MDL2 Assets" Style="{StaticResource FluentButton}" Width="32" Height="32" Margin="0,0,10,0"/>
+                    <Button Content="&#xE74D;" FontFamily="Segoe MDL2 Assets" Style="{StaticResource FluentButton}" Width="32" Height="32" Click="Clear_Click"/>
+                </StackPanel>
+            </Grid>
         </Border>
 
-        <!-- Loading indicator -->
-        <StackPanel x:Name="LoadingPanel"
-                    Grid.Row="2"
-                    Visibility="Collapsed"
-                    Margin="0,0,0,8">
-            <TextBlock Text="En attente de la réponse..."
-                       FontStyle="Italic"
-                       Foreground="#888888"
-                       Margin="0,0,0,4"/>
-            <ProgressBar IsIndeterminate="True" Height="4"/>
-        </StackPanel>
+        <ScrollViewer x:Name="ChatScroll" Grid.Row="1" Margin="0,10,0,0" Padding="40,10">
+            <StackPanel SizeChanged="ChatPanel_SizeChanged">
+                <ItemsControl x:Name="MessagesItemsControl">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,10,0,10">
+                                <StackPanel x:Name="MessagePanel" Orientation="Horizontal" HorizontalAlignment="Left">
+                                    
+                                    <Border x:Name="IAAvatar" Width="28" Height="28" Background="{StaticResource SurfaceHoverBrush}" CornerRadius="6" VerticalAlignment="Top" Margin="0,0,15,0">
+                                        <TextBlock Text="IA" Foreground="#FFFFFF" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
 
-        <!-- Input area -->
-        <DockPanel Grid.Row="3">
-            <Button x:Name="SendButton"
-                    Content="Envoyer"
-                    DockPanel.Dock="Right"
-                    Width="100"
-                    Height="35"
-                    Margin="5,0,0,0"
-                    Click="SendButton_Click"/>
-            <ToggleButton x:Name="StreamToggle"
-                          Content="Stream"
-                          DockPanel.Dock="Right"
-                          Width="70"
-                          Height="35"
-                          Margin="5,0,0,0"/>
-            <TextBox x:Name="InputTextBox"
-                     Height="35"
-                     VerticalContentAlignment="Center"/>
-        </DockPanel>
+                                    <StackPanel MaxWidth="500">
+                                        <Border x:Name="MessageBubble" Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="15">
+                                            <TextBlock Text="{Binding Content}" x:Name="MessageText" Foreground="#FFFFFF" TextWrapping="Wrap" LineHeight="20"/>
+                                        </Border>
+                                        
+                                        <Button x:Name="CopyBtn"
+                                                Background="Transparent"
+                                                BorderBrush="Transparent"
+                                                BorderThickness="0"
+                                                Cursor="Hand"
+                                                Click="CopyBtn_Click"
+                                                CommandParameter="{Binding Content}">
+
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <ContentPresenter/>
+                                                </ControlTemplate>
+                                            </Button.Template>
+
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE8C8;"
+                                                        Foreground="{StaticResource TextSecondaryBrush}"
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Margin="0,0,5,0"/>
+                                                <TextBlock Text="Copier" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                            </StackPanel>
+
+                                        </Button>
+                                    </StackPanel>
+
+                                    <Border x:Name="UserAvatar" Width="28" Height="28" Background="{StaticResource UserBubbleBrush}" CornerRadius="6" VerticalAlignment="Top" Margin="15,0,0,0" Visibility="Collapsed">
+                                        <TextBlock Text="U" Foreground="#FFFFFF" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </StackPanel>
+                            </Grid>
+                            
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding Role}" Value="user">
+                                    <Setter TargetName="MessagePanel" Property="HorizontalAlignment" Value="Right"/>
+                                    <Setter TargetName="IAAvatar" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="UserAvatar" Property="Visibility" Value="Visible"/>
+                                    <Setter TargetName="MessageBubble" Property="Background" Value="{StaticResource UserBubbleBrush}"/>
+                                    <Setter TargetName="CopyBtn" Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+
+                                <DataTrigger Binding="{Binding Role}" Value="system">
+                                    <Setter TargetName="MessageBubble" Property="Background" Value="Transparent"/>
+                                    <Setter TargetName="MessageText" Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                    <Setter TargetName="MessageText" Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter TargetName="MessagePanel" Property="HorizontalAlignment" Value="Center"/>
+                                    <Setter TargetName="IAAvatar" Property="Visibility" Value="Collapsed"/>
+                                    <Setter TargetName="CopyBtn" Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <StackPanel x:Name="LoadingIndicator" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Left" 
+                            Margin="24,5,24,10" 
+                            Visibility="Collapsed">
+                    
+                    <ProgressBar IsIndeterminate="True" 
+                                Width="60" 
+                                Height="3" 
+                                Background="#222222" 
+                                Foreground="#e62a28" 
+                                BorderThickness="0"
+                                VerticalAlignment="Center"/>
+                    
+                    <TextBlock Text="G.E.R.A.R.D réfléchit..." 
+                            Foreground="#888888" 
+                            Margin="12,0,0,0" 
+                            FontSize="12" 
+                            FontStyle="Italic" 
+                            VerticalAlignment="Center"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="{StaticResource AppBackgroundBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+            <Grid Margin="40,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox x:Name="MessageInput" Background="{StaticResource SurfaceBrush}" Foreground="#FFFFFF" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" 
+                         Padding="15,10" VerticalContentAlignment="Center" KeyDown="MessageInput_KeyDown" TextWrapping="Wrap">
+                    <TextBox.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="8"/>
+                        </Style>
+                    </TextBox.Resources>
+                </TextBox>
+
+                <ToggleButton x:Name="StreamToggle"
+                            Grid.Column="1"
+                            Width="40"
+                            Height="40"
+                            Margin="10,0,0,0"
+                            Background="{StaticResource SurfaceBrush}"
+                            Foreground="#68A0FA"
+                            BorderThickness="0"
+                            IsChecked="True"
+                            Content="&#xE17C;"
+                            FontFamily="Segoe MDL2 Assets">
+
+                    <ToggleButton.Template>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border x:Name="Root"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="6">
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+
+                                <Trigger Property="IsChecked" Value="True">
+                                    <Setter TargetName="Root"
+                                            Property="Background"
+                                            Value="{StaticResource SurfaceBrush}"/>
+                                </Trigger>
+
+                                <Trigger Property="IsChecked" Value="False">
+                                    <Setter TargetName="Root"
+                                            Property="Background"
+                                            Value="#1F1F1F"/>
+                                </Trigger>
+
+                            </ControlTemplate.Triggers>
+
+                        </ControlTemplate>
+                    </ToggleButton.Template>
+
+                </ToggleButton>           
+                
+                <Button Grid.Column="2" Content="&#xE72A;" FontFamily="Segoe MDL2 Assets" Background="{StaticResource SurfaceHoverBrush}" Foreground="#FFFFFF" 
+                        Width="40" Height="40" Margin="10,0,0,0" BorderThickness="0" Style="{StaticResource FluentButton}" Click="Send_Click">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="6"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </Grid>
+        </Border>
     </Grid>
 </UserControl>
