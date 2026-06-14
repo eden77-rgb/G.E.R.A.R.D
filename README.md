@@ -142,13 +142,13 @@ Voir `http://localhost:8000/docs` pour la documentation complète des body et ty
 ## 📸 Screenshots
 
 - Page d'accueil
-<img width="859" height="642" alt="image" src="https://github.com/user-attachments/assets/0ee12e42-7074-4ae6-b1df-61bea678e94e" />
+<img width="975" height="850" alt="image" src="https://github.com/user-attachments/assets/d0891a48-b098-4dc2-b2b3-8f89106480e6" />
 
 - Génération d'une réponse
-<img width="859" height="642" alt="image" src="https://github.com/user-attachments/assets/97d83bef-8e6a-4e58-a818-804bb6a6a843" />
+<img width="975" height="850" alt="image" src="https://github.com/user-attachments/assets/d186f951-d1b5-4569-a197-f2664cbe77b8" />
 
 - Historique
-<img width="859" height="642" alt="image" src="https://github.com/user-attachments/assets/4ba2e2f6-9972-4f8d-b093-bf1483cf6f20" />
+<img width="975" height="850" alt="image" src="https://github.com/user-attachments/assets/fc761230-2c29-46f9-826c-7e108604cc86" />
 
 ---
 
