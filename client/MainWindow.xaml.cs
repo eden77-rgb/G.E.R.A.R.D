@@ -25,27 +25,58 @@ namespace client
         private IntPtr _windowHandle;
         private HwndSource? _hwndSource;
 
+        private HomeView _homeView;
+        private ChatView _chatView;
+
         public MainWindow()
         {
             InitializeComponent();
-            ShowHome();
+
+            _homeView = new HomeView();
+            _chatView = new ChatView("custom");
             
+            /*
+            _chatView = new ChatView("custom"); // Instanciation par défaut
+            */
+
+            // Navigation depuis Home -> Chat
+            _homeView.OnNavigateToChat += (actionName) => 
+            {
+                if (actionName.StartsWith("Custom: "))
+                {
+                    string promptText = actionName.Substring(8);
+
+                    _chatView = new ChatView("custom");
+                    _chatView.SetContext("Prompt personnalisé");
+
+                    _chatView.OnNavigateHome += () => { MainContent.Content = _homeView; };
+                    MainContent.Content = _chatView;
+
+                    _chatView.AutoSend(promptText);
+                }
+
+                else 
+                {
+                    _chatView = new ChatView(actionName);
+                    _chatView.SetContext(actionName);
+
+                    _chatView.OnNavigateHome += () => { MainContent.Content = _homeView; };
+                    MainContent.Content = _chatView;
+                }
+            };
+
+            /*
+            // Navigation depuis Chat -> Home
+            _chatView.BackRequested += (s, e) => 
+            {
+                MainContent.Content = _homeView;
+            };
+            */
+
+            MainContent.Content = _homeView;
+
             Loaded += MainWindow_Loaded;
             Closed += MainWindow_Closed;
-        }
-
-        private void ShowHome()
-        {
-            var home = new HomeView();
-            home.PromptSelected += OnPromptSelected;
-            MainContent.Content = home;
-        }
-
-        private void OnPromptSelected(object? sender, PromptSelectedArgs e)
-        {
-            var chat = new ChatView(e.PromptType, e.CustomInstruction);
-            chat.BackRequested += (s, _) => ShowHome();
-            MainContent.Content = chat;
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -55,7 +86,7 @@ namespace client
             _hwndSource = HwndSource.FromHwnd(_windowHandle);
             _hwndSource?.AddHook(HwndHook);
 
-            bool success = RegisterHotKey(_windowHandle, HOTKEY_ID, K_CTRL | K_ALT, K_A);   // CTRL + ALT + A
+            RegisterHotKey(_windowHandle, HOTKEY_ID, K_CTRL | K_ALT, K_A);   // CTRL + ALT + A
         }
 
         private IntPtr HwndHook(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -87,5 +118,10 @@ namespace client
             _hwndSource?.RemoveHook(HwndHook);
             UnregisterHotKey(_windowHandle, HOTKEY_ID);
         }
+
+        // --- Ajout pour la nouvelle UI (Barre de titre WindowChrome) ---
+        private void Minimize_Click(object sender, RoutedEventArgs e) { WindowState = WindowState.Minimized; }
+        private void Maximize_Click(object sender, RoutedEventArgs e) { WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized; }
+        private void Close_Click(object sender, RoutedEventArgs e) { Application.Current.Shutdown(); }
     }
 }
